@@ -1,7 +1,7 @@
 # Description:
 #   google calendar for hubot
 # Commands:
-#   hubot cal
+#   hubot cal (username|me|our)
 
 requestWithJWT = require('google-oauth-jwt').requestWithJWT()
 moment         = require('moment-timezone')
@@ -9,11 +9,19 @@ _              = require('underscore')
 
 module.exports = (robot) ->
 
-  robot.respond /cal$/i, (msg) ->
-    msg.send "Getting our schedules..."
+  robot.respond /cal (.+)$/i, (msg) ->
+    user = msg.match[1]
+    if user == 'me'
+      user = msg.message.user.name
+
+    msg.send "Getting " + user + " schedules..."
+
+    if user == 'our'
+      user = null
+
     try
       d = new Date()
-      getCalendarEvents d, (str) ->
+      getCalendarEvents d, user, (str) ->
         msg.send str
     catch e
       msg.send "exception: #{e}"
@@ -62,7 +70,7 @@ module.exports = (robot) ->
     strs.join("\n") + "\n"
 
 
-  getCalendarEvents = (baseDate, cb) ->
+  getCalendarEvents = (baseDate, user, cb) ->
     onError = (err) ->
       cb "receive err: #{err}"
 
@@ -75,6 +83,11 @@ module.exports = (robot) ->
         timeMax = new Date(baseDate.getTime())
         timeMax.setHours 23, 59, 59
         for i, item of data.items
+          match = /^(.+)@/.exec(item.id)
+          if user
+            unless match[1] == user
+              continue
+
           do (item) ->
             request(
               {
