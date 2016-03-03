@@ -5,6 +5,8 @@
   "author": "Akihiro Okuda <axio@o9da.net>",
   "description": "A simple helpful robot for your Company",
   "dependencies": {
+    "githubot": "^1.0.0",
+    "google-oauth-jwt": "*",
     "hubot": "^2.11.0",
     "hubot-diagnostics": "0.0.1",
     "hubot-google-images": "^0.1.2",
@@ -19,8 +21,6 @@
     "hubot-shipit": "^0.1.1",
     "hubot-slack": "^3.2.1",
     "hubot-youtube": "^0.1.2",
-
-    "google-oauth-jwt": "*",
     "moment-timezone": "*",
     "underscore": "*"
   },
